@@ -15,6 +15,7 @@ import {
 import MarkdownService from "./markdownService";
 import MarkdownPreviewConfig from "./util/markdownPreviewConfig";
 import PreviewConfigManager from "./util/previewConfigManager";
+import { XrefService } from "./xrefResolver";
 
 export class DocumentContentProvider implements TextDocumentContentProvider {
     public static readonly scheme = "docsPreview";
@@ -100,7 +101,7 @@ export class DocumentContentProvider implements TextDocumentContentProvider {
         let body = await MarkdownService.markupAsync(markdown, filePath, basePath);
         body = this.filterYamlHeader(body);
         body = this.fixLinks(body, uri);
-        body = this.transformXref(body);
+        body = await XrefService.resolveAsync(body);
 
         const result = `<!DOCTYPE html>
         <html>
